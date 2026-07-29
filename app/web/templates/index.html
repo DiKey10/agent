@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="add-panel">
+  <h1>Wklej link do rolki</h1>
+  <p class="hint">
+    Aplikacja pobierze film, rozpozna mowę, odczyta napisy z klatek i ułoży
+    z tego przepis po polsku — razem z makro.
+  </p>
+
+  <form id="add-form" action="/add" method="post">
+    <input
+      type="url"
+      id="url-input"
+      name="url"
+      placeholder="https://www.instagram.com/reel/…"
+      required
+      autocomplete="off">
+    <button type="submit">Zrób przepis</button>
+  </form>
+
+  <ul id="jobs" class="jobs"></ul>
+</section>
+
+{% if recipes %}
+<section class="grid">
+  {% for recipe in recipes %}
+  <a class="card" href="/recipe/{{ recipe.id }}">
+    <div class="card-media">
+      {% if recipe.thumbnail_url %}
+        <img src="{{ recipe.thumbnail_url }}" alt="" loading="lazy">
+      {% else %}
+        <span class="placeholder">🍳</span>
+      {% endif %}
+      {% if recipe.macros and recipe.macros.kcal %}
+        <span class="kcal">{{ recipe.macros.kcal|round|int }} kcal</span>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <h2>{{ recipe.title_pl }}</h2>
+      {% if recipe.summary_pl %}<p>{{ recipe.summary_pl }}</p>{% endif %}
+      <div class="meta">
+        {% if recipe.prep_time_min %}<span>⏱ {{ recipe.prep_time_min }} min</span>{% endif %}
+        {% if recipe.servings %}<span>🍽 {{ recipe.servings }} porc.</span>{% endif %}
+        {% if recipe.author %}<span>@{{ recipe.author }}</span>{% endif %}
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</section>
+{% else %}
+<p class="empty">
+  {% if q %}Nic nie pasuje do „{{ q }}”.{% else %}Jeszcze pusto. Wklej pierwszy link powyżej.{% endif %}
+</p>
+{% endif %}
+{% endblock %}

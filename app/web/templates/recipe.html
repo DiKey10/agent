@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}{{ recipe.title_pl }}{% endblock %}
+
+{% block content %}
+<article class="recipe">
+  <a class="back" href="/">← Wszystkie przepisy</a>
+
+  <header class="recipe-head">
+    {% if recipe.thumbnail_url %}
+      <img class="hero" src="{{ recipe.thumbnail_url }}" alt="">
+    {% endif %}
+    <div>
+      <h1>{{ recipe.title_pl }}</h1>
+      {% if recipe.title_original and recipe.title_original != recipe.title_pl %}
+        <p class="original">Oryginał: {{ recipe.title_original }}</p>
+      {% endif %}
+      {% if recipe.summary_pl %}<p class="summary">{{ recipe.summary_pl }}</p>{% endif %}
+
+      <div class="facts">
+        {% if recipe.prep_time_min %}<div><b>{{ recipe.prep_time_min }} min</b><span>przygotowanie</span></div>{% endif %}
+        {% if recipe.cook_time_min %}<div><b>{{ recipe.cook_time_min }} min</b><span>obróbka</span></div>{% endif %}
+        {% if recipe.servings %}<div><b>{{ recipe.servings }}</b><span>porcje</span></div>{% endif %}
+        {% if recipe.difficulty %}<div><b>{{ recipe.difficulty }}</b><span>poziom</span></div>{% endif %}
+      </div>
+
+      {% if recipe.tags_pl %}
+      <div class="tags">
+        {% for tag in recipe.tags_pl %}<span class="tag">{{ tag }}</span>{% endfor %}
+      </div>
+      {% endif %}
+
+      <p class="source">
+        <a href="{{ recipe.url }}" target="_blank" rel="noopener">Oryginalna rolka</a>
+        {% if recipe.author %} · @{{ recipe.author }}{% endif %}
+        {% if recipe.source_language %} · język: {{ recipe.source_language }}{% endif %}
+      </p>
+    </div>
+  </header>
+
+  {% if recipe.macros %}
+  <section class="macros">
+    <h2>Makro
+      <small>{% if recipe.macros.basis == 'per_100g' %}na 100 g{% elif recipe.macros.basis == 'total' %}całość{% else %}na porcję{% endif %}{% if recipe.macros.estimated %} · szacunkowo{% endif %}</small>
+    </h2>
+    <div class="macro-row">
+      {% if recipe.macros.kcal %}<div><b>{{ recipe.macros.kcal|round|int }}</b><span>kcal</span></div>{% endif %}
+      {% if recipe.macros.protein_g %}<div><b>{{ recipe.macros.protein_g|round(1) }} g</b><span>białko</span></div>{% endif %}
+      {% if recipe.macros.fat_g %}<div><b>{{ recipe.macros.fat_g|round(1) }} g</b><span>tłuszcz</span></div>{% endif %}
+      {% if recipe.macros.carbs_g %}<div><b>{{ recipe.macros.carbs_g|round(1) }} g</b><span>węglow.</span></div>{% endif %}
+      {% if recipe.macros.fiber_g %}<div><b>{{ recipe.macros.fiber_g|round(1) }} g</b><span>błonnik</span></div>{% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <div class="columns">
+    <section>
+      <h2>Składniki</h2>
+      <ul class="ingredients">
+        {% for item in recipe.ingredients %}
+        <li>
+          {% if item.quantity %}<b>{{ item.quantity }}{% if item.unit %} {{ item.unit }}{% endif %}</b>{% endif %}
+          {{ item.name_pl }}
+          {% if item.note %}<i>({{ item.note }})</i>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+
+      {% if recipe.equipment_pl %}
+      <h2>Sprzęt</h2>
+      <ul class="plain">
+        {% for item in recipe.equipment_pl %}<li>{{ item }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+
+    <section>
+      <h2>Przygotowanie</h2>
+      <ol class="steps">
+        {% for step in recipe.steps %}<li>{{ step.text_pl }}</li>{% endfor %}
+      </ol>
+
+      {% if recipe.tips_pl %}
+      <h2>Wskazówki</h2>
+      <ul class="tips">
+        {% for tip in recipe.tips_pl %}<li>{{ tip }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+  </div>
+
+  {% if recipe.frame_urls %}
+  <section>
+    <h2>Kadry z rolki</h2>
+    <div class="frames">
+      {% for url in recipe.frame_urls %}<img src="{{ url }}" alt="" loading="lazy">{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}
